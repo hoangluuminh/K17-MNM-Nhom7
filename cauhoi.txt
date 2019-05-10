@@ -1,10 +1,10 @@
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Prường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-Trường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-4rường nào xịn nhất?|b|AAA|SGU|BBB|CCC
-erường nào xịn nhất?|b|AAA|SGU|BBB|CCC
+Tim nguoi gom bao nhieu ngan?|3|2|3|4|5
+Viet Nam co bao nhieu doi vua hung?|3|16|17|18|19
+1 byte gom bao nhieu bit?|2|1|8|64|1024
+Tieng Viet co bao nhieu chu cai?|4|26|27|28|29
+Noi ra doi cua the van hoi Olympic?|1|Hy Lap|My|Thuy Si|Phap
+Nuoc nao co dien tich lon thu 2 the gioi?|2|Trung Quoc|Canada|My|Nga
+Tich cua 3 so tu nhien dau tien?|1|0|1|2|6
+Mat troi moc o huong nao?|3|Bac|Nam|Dong|Tay
+Ngon ngu nao duoc su dung nhieu nhat?|4|Tieng Anh|Tieng Han|Tieng Viet|Tieng Trung
+Tai khoan root trong Linux co UID la?|4|500|499|1|0
