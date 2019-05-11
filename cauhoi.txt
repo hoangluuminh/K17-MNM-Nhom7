@@ -1,10 +1,10 @@
-Tim nguoi gom bao nhieu ngan?|3|2|3|4|5
-Viet Nam co bao nhieu doi vua hung?|3|16|17|18|19
-1 byte gom bao nhieu bit?|2|1|8|64|1024
-Tieng Viet co bao nhieu chu cai?|4|26|27|28|29
-Noi ra doi cua the van hoi Olympic?|1|Hy Lap|My|Thuy Si|Phap
-Nuoc nao co dien tich lon thu 2 the gioi?|2|Trung Quoc|Canada|My|Nga
-Tich cua 3 so tu nhien dau tien?|1|0|1|2|6
-Mat troi moc o huong nao?|3|Bac|Nam|Dong|Tay
-Ngon ngu nao duoc su dung nhieu nhat?|4|Tieng Anh|Tieng Han|Tieng Viet|Tieng Trung
-Tai khoan root trong Linux co UID la?|4|500|499|1|0
+Tim người gồm bao nhiêu ngăn?|3|2|3|4|5
+Việt Nam có bao nhiêu đời vua Hùng?|3|16|17|18|19
+1 byte gồm bao nhiêu bit?|2|1|8|64|1024
+Tiếng Việt có bao nhiêu chữ cái?|4|26|27|28|29
+Nơi ra đời của thế vấn hội Olympic?|1|Hy Lạp|Mỹ|Thụy Sĩ|Pháp
+Nước nào có diện tích lớn thứ 2 thế giới?|2|Trung Quốc|Canada|Mỹ|Nga
+Tích của 3 số tự nhiên đầu tiên?|1|0|1|2|6
+Mặt Trời mọc ở hướng nào?|3|Bắc|Nam|Đông|Tây
+Ngôn ngữ nào được sử dụng nhiều nhất?|4|Tiếng Anh|Tiếng Hàn|Tiếng Việt|Tiếng Trung
+Tài khoản root trong Linux có UID là?|4|500|499|1|0

@@ -34,9 +34,32 @@ while [ $continue -eq 1 ]; do
 
 	# Xuất câu hỏi từ cauhoi.txt
 	cauhoi=`cat cauhoi.txt | head -$current | tail -1 | cut -d'|' -f1`
-	echo $cauhoi
+	echo "Câu hỏi: $cauhoi"
 
-	# Hiển thị câu hỏi
+	# Hiển thị câu trả lời
+	cauA=`cat cauhoi.txt | head -$current | tail -1 | cut -d'|' -f3`
+	cauB=`cat cauhoi.txt | head -$current | tail -1 | cut -d'|' -f4`
+	cauC=`cat cauhoi.txt | head -$current | tail -1 | cut -d'|' -f5`
+	cauD=`cat cauhoi.txt | head -$current | tail -1 | cut -d'|' -f6`
+	echo "A: $cauA"
+	echo "B: $cauB"
+	echo "C: $cauC"
+	echo "D: $cauD"
+
+	# Nhận input từ người chơi
+	echo "Tùy chọn: "
+	echo "   1: 50/50"
+	echo "   2: Đổi câu hỏi"
+	echo "---"
+	read -p "Vui lòng nhập: " getInput
+
+	# Xử lý input
+	case $getInput in
+		"1")
+			trangThai[$current]=1
+			echo "Tiến hành chọn 50/50"
+			;;
+	esac
 	
 	# Lưu tiến trình: Câu hỏi đã chọn
 	trangThai[$current]=2
