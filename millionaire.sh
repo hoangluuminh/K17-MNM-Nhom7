@@ -51,33 +51,36 @@ trogiup2=0
 
 while [ $daTraLoi -ne $soCau ]; do
 	clear
+	#cat progress.txt
 	#echo "da tra loi: $daTraLoi"
 	# Đọc dữ liệu tiến trình của người chơi hiện tại
-	trangThai=()
-	chonDung=()
-	while read line; do
-		trangThai+=(`echo $line | cut -d'|' -f1`)
-		chonDung+=(`echo $line | cut -d'|' -f2`)
-	done < progress.txt
-	rm progress.txt &> /dev/null
+	#trangThai=()
+	#chonDung=()
+	#while read line; do
+		#trangThai+=(`echo $line | cut -d'|' -f1`)
+		#chonDung+=(`echo $line | cut -d'|' -f2`)
+	#done < progress.txt
+	#rm progress.txt &> /dev/null
 	
 	# Lấy câu hỏi chưa chọn
-	current=$(( ($RANDOM%$soCau) ))
-	until [ ${trangThai[$current]} -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ ${trangThai[$current]} -eq 1 ]`; do
-		current=$(( ($RANDOM%$soCau) ))
+	current=$(( ($RANDOM%$soCau) +1))
+	current_trangThai=`cat progress.txt | head -$current | tail -1 | cut -d'|' -f1`
+	until [ $current_trangThai -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ $current_trangThai -eq 1 ]`; do
+		current=$(( ($RANDOM%$soCau) +1))
+		current_trangThai=`cat progress.txt | head -$current | tail -1 | cut -d'|' -f1`
 	done
-	echo "Câu hiện tại: "$current
+	#echo "Câu hiện tại: "$current
 
 	# Xuất câu hỏi từ cauhoi.txt
-	cauhoi=`cat cauhoi.txt | head -$(($current+1)) | tail -1 | cut -d'|' -f1`
+	cauhoi=`cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f1`
 	echo "Câu hỏi: $cauhoi"
 
 	# Hiển thị câu trả lời
 	cauArr=()
-	cauArr[1]="A: `cat cauhoi.txt | head -$(($current+1)) | tail -1 | cut -d'|' -f3` "
-	cauArr[2]="B: `cat cauhoi.txt | head -$(($current+1)) | tail -1 | cut -d'|' -f4` "
-	cauArr[3]="C: `cat cauhoi.txt | head -$(($current+1)) | tail -1 | cut -d'|' -f5` "
-	cauArr[4]="D: `cat cauhoi.txt | head -$(($current+1)) | tail -1 | cut -d'|' -f6` "
+	cauArr[1]="A: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f3` "
+	cauArr[2]="B: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f4` "
+	cauArr[3]="C: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f5` "
+	cauArr[4]="D: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f6` "
 	for ((i=1; i<=4; i++)); do
 		echo ${cauArr[$i]}
 	done
@@ -91,7 +94,7 @@ while [ $daTraLoi -ne $soCau ]; do
 
 	# Xử lý input
 	chonCau=0
-	cauDung=`cat cauhoi.txt | head -$(($current+1)) | tail -1 | cut -d'|' -f2`
+	cauDung=`cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f2`
 	while [ $chonCau -eq 0 ]; do
 		read -p "Vui lòng nhập: " getInput
 		case $getInput in
@@ -100,8 +103,10 @@ while [ $daTraLoi -ne $soCau ]; do
 				;;
 			2)
 				if [ $trogiup2 -eq 0 ]; then
-					trangThai[$current]=1
+					#trangThai[$current]=1
+					sed -i '' $current's/.|/1|/' progress.txt
 					echo "Tiến hành đổi câu hỏi"
+					#cat progress.txt
 					trogiup2=1
 					break
 				else
@@ -112,25 +117,29 @@ while [ $daTraLoi -ne $soCau ]; do
 				echo "Chọn câu A"
 				chonCau=1
 				daTraLoi=$(($daTraLoi+1))
-				trangThai[$current]=2
+				#trangThai[$current]=2
+				sed -i '' $current's/.|/2|/' progress.txt
 				;;
 			[Bb])
 				echo "Chọn câu B"
 				chonCau=2
 				daTraLoi=$(($daTraLoi+1))
-				trangThai[$current]=2
+				#trangThai[$current]=2
+				sed -i '' $current's/.|/2|/' progress.txt
 				;;
 			[Cc])
 				echo "Chọn câu C"
 				chonCau=3
 				daTraLoi=$(($daTraLoi+1))
-				trangThai[$current]=2
+				#trangThai[$current]=2
+				sed -i '' $current's/.|/2|/' progress.txt
 				;;
 			[Dd])
 				echo "Chọn câu D"
 				chonCau=4
 				daTraLoi=$(($daTraLoi+1))
-				trangThai[$current]=2
+				#trangThai[$current]=2
+				sed -i '' $current's/.|/2|/' progress.txt
 				;;
 			*)
 				echo "Lỗi"
@@ -142,19 +151,21 @@ while [ $daTraLoi -ne $soCau ]; do
 	if [ $chonCau -ne 0 ]; then
 		if [ $chonCau -eq $cauDung ]; then
 			echo "Đúng! +1 điểm!"
-			chonDung[$current]=1
+			#chonDung[$current]=1
+			sed -i '' $current's/|./|1/' progress.txt
 			
 		else
 			echo "Sai..."
 			echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
-			chonDung[$current]=0
+			#chonDung[$current]=0
+			sed -i '' $current's/|./|0/' progress.txt
 		fi
 	fi
 	
 	# Lưu tiến trình: Câu hỏi đã chọn
-	for ((i=0; i<$soCau; i++)); do
-		echo ${trangThai[$i]}"|"${chonDung[$i]} >> progress.txt 
-	done
+	#for ((i=0; i<$soCau; i++)); do
+		#echo ${trangThai[$i]}"|"${chonDung[$i]} >> progress.txt 
+	#done
 	
 	# Nhấn để tiếp tục
 	echo "--- Nhấn phím bất kỳ để tiếp tục... ---"
