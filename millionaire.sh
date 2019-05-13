@@ -39,6 +39,7 @@ trogiup2=0
 
 continue=1
 while [ $continue -eq 1 ]; do
+	echo "da tra loi: $daTraLoi"
 	# Đọc dữ liệu tiến trình của người chơi hiện tại
 	trangThai=()
 	chonDung=()
@@ -50,8 +51,7 @@ while [ $continue -eq 1 ]; do
 	rm progress.txt &> /dev/null
 	
 	# Lấy câu hỏi chưa chọn
-	current=$(( ($RANDOM%$soCau) ))
-	while [ ${trangThai[$current]} -ne 0 ]; do
+	until [ ${trangThai[$current]} -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ ${trangThai[$current]} -eq 1 ]`; do
 		current=$(( ($RANDOM%$soCau) ))
 	done
 	echo "Câu hiện tại: "$current
@@ -87,8 +87,14 @@ while [ $continue -eq 1 ]; do
 				cau5050
 				;;
 			2)
-				trangThai[$current]=1
-				echo "Tiến hành đổi câu hỏi"
+				if [ $trogiup2 -eq 0 ]; then
+					trangThai[$current]=1
+					echo "Tiến hành đổi câu hỏi"
+					trogiup2=1
+					break
+				else
+					echo "Đã hết quyền trở giúp Đổi câu hỏi"
+				fi
 				;;
 			[Aa])
 				echo "Chọn câu A"
@@ -122,14 +128,16 @@ while [ $continue -eq 1 ]; do
 	done
 
 	# Đúng hay sai
-	if [ $chonCau -eq $cauDung ]; then
-		echo "Đúng! +1 điểm!"
-		chonDung[$current]=1
-		
-	else
-		echo "Sai..."
-		echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
-		chonDung[$current]=0
+	if [ $chonCau -ne 0 ]; then
+		if [ $chonCau -eq $cauDung ]; then
+			echo "Đúng! +1 điểm!"
+			chonDung[$current]=1
+			
+		else
+			echo "Sai..."
+			echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
+			chonDung[$current]=0
+		fi
 	fi
 	
 	# Lưu tiến trình: Câu hỏi đã chọn
