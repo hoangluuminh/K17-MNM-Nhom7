@@ -29,10 +29,13 @@ fi
 
 clear
 echo "Chào mừng đến với chương trình Đi tìm triệu phú!"
-
+echo "Được viết bởi: Lưu Minh Hoàng, Ninh Ngọc Hiếu, Đàm Thế Hào"
 soCau=`cat cauhoi.txt | wc -l | awk '{print $1}'`
 echo "Số câu: "$soCau
 echo "+++++"
+echo "Nhấn phím bất kỳ để bắt đầu..."
+read
+
 daTraLoi=0
 
 # Tạo file tiến trình
