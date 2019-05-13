@@ -19,11 +19,20 @@ cau5050 () {
 	trogiup1=1
 }
 # END functions
+# Kiểm tra input
+if [ -f cauhoi.txt ]; then
+	:
+else
+	echo "Thiếu file câu hỏi cauhoi.txt"
+	exit
+fi
+
 clear
 echo "Chào mừng đến với chương trình Đi tìm triệu phú!"
 
 soCau=`cat cauhoi.txt | wc -l | awk '{print $1}'`
 echo "Số câu: "$soCau
+echo "+++++"
 daTraLoi=0
 
 # Tạo file tiến trình
@@ -37,13 +46,12 @@ done
 trogiup1=0
 trogiup2=0
 
-continue=1
-while [ $continue -eq 1 ]; do
-	echo "da tra loi: $daTraLoi"
+while [ $daTraLoi -ne $soCau ]; do
+	clear
+	#echo "da tra loi: $daTraLoi"
 	# Đọc dữ liệu tiến trình của người chơi hiện tại
 	trangThai=()
 	chonDung=()
-	cat progress.txt
 	while read line; do
 		trangThai+=(`echo $line | cut -d'|' -f1`)
 		chonDung+=(`echo $line | cut -d'|' -f2`)
@@ -51,6 +59,7 @@ while [ $continue -eq 1 ]; do
 	rm progress.txt &> /dev/null
 	
 	# Lấy câu hỏi chưa chọn
+	current=$(( ($RANDOM%$soCau) ))
 	until [ ${trangThai[$current]} -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ ${trangThai[$current]} -eq 1 ]`; do
 		current=$(( ($RANDOM%$soCau) ))
 	done
@@ -122,7 +131,6 @@ while [ $continue -eq 1 ]; do
 				;;
 			*)
 				echo "Lỗi"
-				read
 				;;
 		esac
 	done
@@ -141,12 +149,20 @@ while [ $continue -eq 1 ]; do
 	fi
 	
 	# Lưu tiến trình: Câu hỏi đã chọn
-	
 	for ((i=0; i<$soCau; i++)); do
 		echo ${trangThai[$i]}"|"${chonDung[$i]} >> progress.txt 
 	done
 	
+	# Nhấn để tiếp tục
+	echo "--- Nhấn phím bất kỳ để tiếp tục... ---"
 	read
 done
 
-			
+# Tính điểm
+diem=0
+while read line; do
+	diem=$(($diem + `echo $line | cut -d'|' -f2` ))
+done < progress.txt
+echo "---"
+echo "Điểm: $diem"
+
