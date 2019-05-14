@@ -19,6 +19,7 @@ cau5050 () {
 	trogiup1=1
 }
 # END functions
+
 # Kiểm tra input
 if [ -f cauhoi.txt ]; then
 	:
@@ -36,6 +37,12 @@ if [ $soCau -ne $cauhoiFormat ]; then
 	exit 2
 fi
 
+if [ -f .progress.txt ]; then
+	echo "Tồn tại file .progress.txt trong cùng thư mục. Vui lòng xóa file hoặc di chuyển millionaire.sh và cauhoi.txt đến thư mục khác"
+	exit 3
+fi
+
+# Khởi động trò chơi
 clear
 echo "Chào mừng đến với chương trình Đi tìm triệu phú!"
 echo "Được viết bởi: Lưu Minh Hoàng, Ninh Ngọc Hiếu, Đàm Thế Hào"
@@ -48,9 +55,9 @@ read
 daTraLoi=0
 
 # Tạo file tiến trình
-rm progress.txt &> /dev/null
+rm .progress.txt &> /dev/null
 for ((i=0; i<$soCau; i++)); do
-	echo "0|0" >> progress.txt
+	echo "0|0" >> .progress.txt
 done
 
 # TrangThai: 0: Chưa chọn; 1: Đã bỏ qua; 2: Đã chọn
@@ -60,7 +67,7 @@ trogiup2=0
 
 while [ $daTraLoi -ne $soCau ]; do
 	clear
-	#cat progress.txt
+	#cat .progress.txt
 	#echo "da tra loi: $daTraLoi"
 	# Đọc dữ liệu tiến trình của người chơi hiện tại
 	#trangThai=()
@@ -68,15 +75,15 @@ while [ $daTraLoi -ne $soCau ]; do
 	#while read line; do
 		#trangThai+=(`echo $line | cut -d'|' -f1`)
 		#chonDung+=(`echo $line | cut -d'|' -f2`)
-	#done < progress.txt
-	#rm progress.txt &> /dev/null
+	#done < .progress.txt
+	#rm .progress.txt &> /dev/null
 	
 	# Lấy câu hỏi chưa chọn
 	current=$(( ($RANDOM%$soCau) +1))
-	current_trangThai=`cat progress.txt | head -$current | tail -1 | cut -d'|' -f1`
+	current_trangThai=`cat .progress.txt | head -$current | tail -1 | cut -d'|' -f1`
 	until [ $current_trangThai -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ $current_trangThai -eq 1 ]`; do
 		current=$(( ($RANDOM%$soCau) +1))
-		current_trangThai=`cat progress.txt | head -$current | tail -1 | cut -d'|' -f1`
+		current_trangThai=`cat .progress.txt | head -$current | tail -1 | cut -d'|' -f1`
 	done
 	#echo "Câu hiện tại: "$current
 
@@ -113,9 +120,9 @@ while [ $daTraLoi -ne $soCau ]; do
 			2)
 				if [ $trogiup2 -eq 0 ]; then
 					#trangThai[$current]=1
-					sed -i '' $current's/.|/1|/' progress.txt
+					sed -i '' $current's/.|/1|/' .progress.txt
 					echo "Tiến hành đổi câu hỏi"
-					#cat progress.txt
+					#cat .progress.txt
 					trogiup2=1
 					break
 				else
@@ -127,28 +134,28 @@ while [ $daTraLoi -ne $soCau ]; do
 				chonCau=1
 				daTraLoi=$(($daTraLoi+1))
 				#trangThai[$current]=2
-				sed -i '' $current's/.|/2|/' progress.txt
+				sed -i '' $current's/.|/2|/' .progress.txt
 				;;
 			[Bb])
 				echo "Chọn câu B"
 				chonCau=2
 				daTraLoi=$(($daTraLoi+1))
 				#trangThai[$current]=2
-				sed -i '' $current's/.|/2|/' progress.txt
+				sed -i '' $current's/.|/2|/' .progress.txt
 				;;
 			[Cc])
 				echo "Chọn câu C"
 				chonCau=3
 				daTraLoi=$(($daTraLoi+1))
 				#trangThai[$current]=2
-				sed -i '' $current's/.|/2|/' progress.txt
+				sed -i '' $current's/.|/2|/' .progress.txt
 				;;
 			[Dd])
 				echo "Chọn câu D"
 				chonCau=4
 				daTraLoi=$(($daTraLoi+1))
 				#trangThai[$current]=2
-				sed -i '' $current's/.|/2|/' progress.txt
+				sed -i '' $current's/.|/2|/' .progress.txt
 				;;
 			*)
 				echo "Lỗi"
@@ -159,15 +166,15 @@ while [ $daTraLoi -ne $soCau ]; do
 	# Đúng hay sai
 	if [ $chonCau -ne 0 ]; then
 		if [ $chonCau -eq $cauDung ]; then
-			echo "Đúng! +1 điểm!"
+			echo "Đúng! +100 điểm!"
 			#chonDung[$current]=1
-			sed -i '' $current's/|./|1/' progress.txt
+			sed -i '' $current's/|./|1/' .progress.txt
 			
 		else
 			echo "Sai..."
 			echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
 			#chonDung[$current]=0
-			sed -i '' $current's/|./|0/' progress.txt
+			sed -i '' $current's/|./|0/' .progress.txt
 			#Ket thuc
 			daTraLoi=$soCau
 		fi
@@ -175,7 +182,7 @@ while [ $daTraLoi -ne $soCau ]; do
 	
 	# Lưu tiến trình: Câu hỏi đã chọn
 	#for ((i=0; i<$soCau; i++)); do
-		#echo ${trangThai[$i]}"|"${chonDung[$i]} >> progress.txt 
+		#echo ${trangThai[$i]}"|"${chonDung[$i]} >> .progress.txt 
 	#done
 	
 	# Nhấn để tiếp tục
@@ -187,7 +194,8 @@ done
 diem=0
 while read line; do
 	diem=$(($diem + `echo $line | cut -d'|' -f2` ))
-done < progress.txt
+done < .progress.txt
+diem=$(($diem*100))
 echo "---"
 echo "Điểm: $diem"
-
+rm .progress.txt &> /dev/null
