@@ -75,7 +75,7 @@ game () {
 				2)
 					if [ $trogiup2 -eq 0 ]; then
 						#trangThai[$current]=1
-						sed -i '' $current"s/.|/1|/" .progress.txt
+						sed -i $current"s/.|/1|/" .progress.txt
 						echo "Tiến hành đổi câu hỏi"
 						#cat .progress.txt
 						trogiup2=1
@@ -89,28 +89,28 @@ game () {
 					chonCau=1
 					daTraLoi=$(($daTraLoi+1))
 					#trangThai[$current]=2
-					sed -i '' $current"s/.|/2|/" .progress.txt
+					sed -i $current"s/.|/2|/" .progress.txt
 					;;
 				[Bb])
 					echo "Chọn câu B"
 					chonCau=2
 					daTraLoi=$(($daTraLoi+1))
 					#trangThai[$current]=2
-					sed -i '' $current"s/.|/2|/" .progress.txt
+					sed -i $current"s/.|/2|/" .progress.txt
 					;;
 				[Cc])
 					echo "Chọn câu C"
 					chonCau=3
 					daTraLoi=$(($daTraLoi+1))
 					#trangThai[$current]=2
-					sed -i '' $current"s/.|/2|/" .progress.txt
+					sed -i $current"s/.|/2|/" .progress.txt
 					;;
 				[Dd])
 					echo "Chọn câu D"
 					chonCau=4
 					daTraLoi=$(($daTraLoi+1))
 					#trangThai[$current]=2
-					sed -i '' $current"s/.|/2|/" .progress.txt
+					sed -i $current"s/.|/2|/" .progress.txt
 					;;
 				*)
 					echo "Lỗi"
@@ -123,13 +123,13 @@ game () {
 			if [ $chonCau -eq $cauDung ]; then
 				echo "Đúng! +100 điểm!"
 				#chonDung[$current]=1
-				sed -i '' $current"s/|./|1/" .progress.txt
+				sed -i $current"s/|./|1/" .progress.txt
 				
 			else
 				echo "Sai..."
 				echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
 				#chonDung[$current]=0
-				sed -i '' $current"s/|./|0/" .progress.txt
+				sed -i $current"s/|./|0/" .progress.txt
 				#Ket thuc
 				daTraLoi=$soCau
 			fi
