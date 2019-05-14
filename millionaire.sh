@@ -24,13 +24,22 @@ if [ -f cauhoi.txt ]; then
 	:
 else
 	echo "Thiếu file câu hỏi cauhoi.txt"
-	exit
+	exit 1
+fi
+
+soCau=`cat cauhoi.txt | wc -l | awk '{print $1}'`
+cauhoiFormat=`cat cauhoi.txt | sed -n '/^..*|[1-4]|..*|..*|..*|..*$/p' | wc -l | awk '{print $1}'`
+if [ $soCau -ne $cauhoiFormat ]; then
+	echo "File cauhoi.txt sai cấu trúc"
+	echo "Cấu trúc đúng: Câu hỏi | STT câu đúng (1,2,3,4) | Câu A | Câu B | Câu C | Câu D "
+	echo "VD: Hệ điều hành phổ biến nhất?|2|MacOS|Windows|Ubuntu|CentOS"
+	exit 2
 fi
 
 clear
 echo "Chào mừng đến với chương trình Đi tìm triệu phú!"
 echo "Được viết bởi: Lưu Minh Hoàng, Ninh Ngọc Hiếu, Đàm Thế Hào"
-soCau=`cat cauhoi.txt | wc -l | awk '{print $1}'`
+
 echo "Số câu: "$soCau
 echo "+++++"
 echo "Nhấn phím bất kỳ để bắt đầu..."
@@ -159,6 +168,8 @@ while [ $daTraLoi -ne $soCau ]; do
 			echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
 			#chonDung[$current]=0
 			sed -i '' $current's/|./|0/' progress.txt
+			#Ket thuc
+			daTraLoi=$soCau
 		fi
 	fi
 	
