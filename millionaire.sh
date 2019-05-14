@@ -18,6 +18,144 @@ cau5050 () {
 	done
 	trogiup1=1
 }
+game () {
+	daTraLoi=0
+
+	# Tạo file tiến trình
+	rm .progress.txt &> /dev/null
+	for ((i=0; i<$soCau; i++)); do
+		echo "0|0" >> .progress.txt
+	done
+
+	# TrangThai: 0: Chưa chọn; 1: Đã bỏ qua; 2: Đã chọn
+	# ChonDung: 0: Sai; 1: Đúng
+	trogiup1=0
+	trogiup2=0
+	while [ $daTraLoi -ne $soCau ]; do
+		clear
+		# Lấy câu hỏi chưa chọn
+		current=$(( ($RANDOM%$soCau) +1))
+		current_trangThai=`cat .progress.txt | head -$current | tail -1 | cut -d'|' -f1`
+		until [ $current_trangThai -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ $current_trangThai -eq 1 ]`; do
+			current=$(( ($RANDOM%$soCau) +1))
+			current_trangThai=`cat .progress.txt | head -$current | tail -1 | cut -d'|' -f1`
+		done
+		#echo "Câu hiện tại: "$current
+
+		# Xuất câu hỏi từ cauhoi.txt
+		cauhoi=`cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f1`
+		echo "Câu hỏi: $cauhoi"
+
+		# Hiển thị câu trả lời
+		cauArr=()
+		cauArr[1]="A: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f3` "
+		cauArr[2]="B: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f4` "
+		cauArr[3]="C: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f5` "
+		cauArr[4]="D: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f6` "
+		for ((i=1; i<=4; i++)); do
+			echo ${cauArr[$i]}
+		done
+
+		# Xuất thông báo Nhận input từ người chơi
+		getInput=""
+		echo "Tùy chọn: "
+		echo "   1: 50/50"
+		echo "   2: Đổi câu hỏi"
+		echo "---"
+
+		# Xử lý input
+		chonCau=0
+		cauDung=`cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f2`
+		while [ $chonCau -eq 0 ]; do
+			read -p "Vui lòng nhập: " getInput
+			case $getInput in
+				1)
+					cau5050
+					;;
+				2)
+					if [ $trogiup2 -eq 0 ]; then
+						#trangThai[$current]=1
+						sed -i '' $current"s/.|/1|/" .progress.txt
+						echo "Tiến hành đổi câu hỏi"
+						#cat .progress.txt
+						trogiup2=1
+						break
+					else
+						echo "Đã hết quyền trở giúp Đổi câu hỏi"
+					fi
+					;;
+				[Aa])
+					echo "Chọn câu A"
+					chonCau=1
+					daTraLoi=$(($daTraLoi+1))
+					#trangThai[$current]=2
+					sed -i '' $current"s/.|/2|/" .progress.txt
+					;;
+				[Bb])
+					echo "Chọn câu B"
+					chonCau=2
+					daTraLoi=$(($daTraLoi+1))
+					#trangThai[$current]=2
+					sed -i '' $current"s/.|/2|/" .progress.txt
+					;;
+				[Cc])
+					echo "Chọn câu C"
+					chonCau=3
+					daTraLoi=$(($daTraLoi+1))
+					#trangThai[$current]=2
+					sed -i '' $current"s/.|/2|/" .progress.txt
+					;;
+				[Dd])
+					echo "Chọn câu D"
+					chonCau=4
+					daTraLoi=$(($daTraLoi+1))
+					#trangThai[$current]=2
+					sed -i '' $current"s/.|/2|/" .progress.txt
+					;;
+				*)
+					echo "Lỗi"
+					;;
+			esac
+		done
+
+		# Đúng hay sai
+		if [ $chonCau -ne 0 ]; then
+			if [ $chonCau -eq $cauDung ]; then
+				echo "Đúng! +100 điểm!"
+				#chonDung[$current]=1
+				sed -i '' $current"s/|./|1/" .progress.txt
+				
+			else
+				echo "Sai..."
+				echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
+				#chonDung[$current]=0
+				sed -i '' $current"s/|./|0/" .progress.txt
+				#Ket thuc
+				daTraLoi=$soCau
+			fi
+		fi
+		
+		# Lưu tiến trình: Câu hỏi đã chọn
+		#for ((i=0; i<$soCau; i++)); do
+			#echo ${trangThai[$i]}"|"${chonDung[$i]} >> .progress.txt 
+		#done
+		
+		# Nhấn để tiếp tục
+		echo "--- Nhấn phím bất kỳ để tiếp tục... ---"
+		read
+	done
+
+	# Tính điểm
+	diem=0
+	while read line; do
+		diem=$(($diem + `echo $line | cut -d'|' -f2` ))
+	done < .progress.txt
+	diem=$(($diem*100))
+	echo "---"
+	echo "Điểm: $diem"
+	rm .progress.txt &> /dev/null
+}
+
 # END functions
 
 # Kiểm tra input
@@ -43,159 +181,33 @@ if [ -f .progress.txt ]; then
 fi
 
 # Khởi động trò chơi
-clear
-echo "Chào mừng đến với chương trình Đi tìm triệu phú!"
-echo "Được viết bởi: Lưu Minh Hoàng, Ninh Ngọc Hiếu, Đàm Thế Hào"
-
-echo "Số câu: "$soCau
-echo "+++++"
-echo "Nhấn phím bất kỳ để bắt đầu..."
-read
-
-daTraLoi=0
-
-# Tạo file tiến trình
-rm .progress.txt &> /dev/null
-for ((i=0; i<$soCau; i++)); do
-	echo "0|0" >> .progress.txt
-done
-
-# TrangThai: 0: Chưa chọn; 1: Đã bỏ qua; 2: Đã chọn
-# ChonDung: 0: Sai; 1: Đúng
-trogiup1=0
-trogiup2=0
-
-while [ $daTraLoi -ne $soCau ]; do
+tieptuc=1
+while [ ! -z $tieptuc ] && [ $tieptuc == "1" ]; do
 	clear
-	#cat .progress.txt
-	#echo "da tra loi: $daTraLoi"
-	# Đọc dữ liệu tiến trình của người chơi hiện tại
-	#trangThai=()
-	#chonDung=()
-	#while read line; do
-		#trangThai+=(`echo $line | cut -d'|' -f1`)
-		#chonDung+=(`echo $line | cut -d'|' -f2`)
-	#done < .progress.txt
-	#rm .progress.txt &> /dev/null
-	
-	# Lấy câu hỏi chưa chọn
-	current=$(( ($RANDOM%$soCau) +1))
-	current_trangThai=`cat .progress.txt | head -$current | tail -1 | cut -d'|' -f1`
-	until [ $current_trangThai -eq 0 ] || `[ $daTraLoi -eq $(($soCau-1)) ] && [ $current_trangThai -eq 1 ]`; do
-		current=$(( ($RANDOM%$soCau) +1))
-		current_trangThai=`cat .progress.txt | head -$current | tail -1 | cut -d'|' -f1`
-	done
-	#echo "Câu hiện tại: "$current
+	echo "Chào mừng đến với chương trình Đi tìm triệu phú!"
+	echo "Được viết bởi: Lưu Minh Hoàng, Ninh Ngọc Hiếu, Đàm Thế Hào"
 
-	# Xuất câu hỏi từ cauhoi.txt
-	cauhoi=`cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f1`
-	echo "Câu hỏi: $cauhoi"
-
-	# Hiển thị câu trả lời
-	cauArr=()
-	cauArr[1]="A: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f3` "
-	cauArr[2]="B: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f4` "
-	cauArr[3]="C: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f5` "
-	cauArr[4]="D: `cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f6` "
-	for ((i=1; i<=4; i++)); do
-		echo ${cauArr[$i]}
-	done
-
-	# Xuất thông báo Nhận input từ người chơi
-	getInput=""
-	echo "Tùy chọn: "
-	echo "   1: 50/50"
-	echo "   2: Đổi câu hỏi"
-	echo "---"
-
-	# Xử lý input
-	chonCau=0
-	cauDung=`cat cauhoi.txt | head -$(($current)) | tail -1 | cut -d'|' -f2`
-	while [ $chonCau -eq 0 ]; do
-		read -p "Vui lòng nhập: " getInput
-		case $getInput in
+	echo "Số câu: "$soCau
+	echo "+++++"
+	echo "1. Bắt đầu chơi"
+	echo "0. Thoát"
+	choose=-1
+	while [ ! $choose == "0" ] && [ ! $choose == "1" ]; do
+		read -p "--> Vui lòng nhập: " choose
+		case $choose in
 			1)
-				cau5050
+				game
+				echo "Bạn có muốn tiếp tục? (Nhấn 1 để tiếp tục)"
+				read tieptuc
 				;;
-			2)
-				if [ $trogiup2 -eq 0 ]; then
-					#trangThai[$current]=1
-					sed -i '' $current"s/.|/1|/" .progress.txt
-					echo "Tiến hành đổi câu hỏi"
-					#cat .progress.txt
-					trogiup2=1
-					break
-				else
-					echo "Đã hết quyền trở giúp Đổi câu hỏi"
-				fi
-				;;
-			[Aa])
-				echo "Chọn câu A"
-				chonCau=1
-				daTraLoi=$(($daTraLoi+1))
-				#trangThai[$current]=2
-				sed -i '' $current"s/.|/2|/" .progress.txt
-				;;
-			[Bb])
-				echo "Chọn câu B"
-				chonCau=2
-				daTraLoi=$(($daTraLoi+1))
-				#trangThai[$current]=2
-				sed -i '' $current"s/.|/2|/" .progress.txt
-				;;
-			[Cc])
-				echo "Chọn câu C"
-				chonCau=3
-				daTraLoi=$(($daTraLoi+1))
-				#trangThai[$current]=2
-				sed -i '' $current"s/.|/2|/" .progress.txt
-				;;
-			[Dd])
-				echo "Chọn câu D"
-				chonCau=4
-				daTraLoi=$(($daTraLoi+1))
-				#trangThai[$current]=2
-				sed -i '' $current"s/.|/2|/" .progress.txt
+			0)
+				exit 0
 				;;
 			*)
-				echo "Lỗi"
+				choose=-1
 				;;
 		esac
 	done
-
-	# Đúng hay sai
-	if [ $chonCau -ne 0 ]; then
-		if [ $chonCau -eq $cauDung ]; then
-			echo "Đúng! +100 điểm!"
-			#chonDung[$current]=1
-			sed -i '' $current"s/|./|1/" .progress.txt
-			
-		else
-			echo "Sai..."
-			echo "Câu trả lời đúng là: ${cauArr[$(($cauDung))]}"
-			#chonDung[$current]=0
-			sed -i '' $current"s/|./|0/" .progress.txt
-			#Ket thuc
-			daTraLoi=$soCau
-		fi
-	fi
 	
-	# Lưu tiến trình: Câu hỏi đã chọn
-	#for ((i=0; i<$soCau; i++)); do
-		#echo ${trangThai[$i]}"|"${chonDung[$i]} >> .progress.txt 
-	#done
-	
-	# Nhấn để tiếp tục
-	echo "--- Nhấn phím bất kỳ để tiếp tục... ---"
-	read
 done
 
-# Tính điểm
-diem=0
-while read line; do
-	diem=$(($diem + `echo $line | cut -d'|' -f2` ))
-done < .progress.txt
-diem=$(($diem*100))
-echo "---"
-echo "Điểm: $diem"
-rm .progress.txt &> /dev/null
